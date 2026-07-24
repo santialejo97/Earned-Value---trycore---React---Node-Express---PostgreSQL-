@@ -1,6 +1,7 @@
 import { DataTypes } from "sequelize";
 import { connection } from "../db/db";
 import Project from "./projects.model";
+import { Status } from "../interfaces/constants.interfaces";
 
 export const Activity = connection.define(
   "tbl_activities",
@@ -36,9 +37,13 @@ export const Activity = connection.define(
       allowNull: false,
     },
     status: {
-      type: DataTypes.ENUM("pending", "in_progress", "completed"),
+      type: DataTypes.ENUM(
+        Status.PENDING,
+        Status.IN_PROGRESS,
+        Status.COMPLETED,
+      ),
       allowNull: false,
-      defaultValue: "pending",
+      defaultValue: Status.PENDING,
     },
     startDate: {
       type: DataTypes.DATE,

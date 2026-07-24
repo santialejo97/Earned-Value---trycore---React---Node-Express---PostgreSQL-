@@ -1,9 +1,7 @@
 import express, { Application } from "express";
 import { connection } from "../db/db";
 import colors from "colors";
-import "../models/users.model";
-import "../models/projects.model";
-import "../models/activities.model";
+import "../models";
 
 class Server {
   private app: Application;
