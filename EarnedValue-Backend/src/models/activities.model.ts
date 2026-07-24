@@ -2,6 +2,7 @@ import { DataTypes } from "sequelize";
 import { connection } from "../db/db";
 import Project from "./projects.model";
 import { Status } from "../interfaces/constants.interfaces";
+import User from "./users.model";
 
 export const Activity = connection.define(
   "tbl_activities",
@@ -61,6 +62,14 @@ export const Activity = connection.define(
         key: "id",
       },
     },
+    id_user: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: User,
+        key: "id_user",
+      },
+    },
   },
   {
     tableName: "tbl_activities",
@@ -74,5 +83,8 @@ export const Activity = connection.define(
 
 Project.hasMany(Activity, { foreignKey: "id_project", as: "activities" });
 Activity.belongsTo(Project, { foreignKey: "id_project", as: "project" });
+
+User.hasMany(Activity, { foreignKey: "id_user", as: "activities" });
+Activity.belongsTo(User, { foreignKey: "id_user", as: "user" });
 
 export default Activity;
