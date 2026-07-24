@@ -1,6 +1,9 @@
 import express, { Application } from "express";
 import { connection } from "../db/db";
 import colors from "colors";
+import "../models/users.model";
+import "../models/projects.model";
+import "../models/activities.model";
 
 class Server {
   private app: Application;
@@ -23,6 +26,7 @@ class Server {
     try {
       console.log(colors.blue(`Estamos conectando a la base de datos`));
       await connection.authenticate();
+      await connection.sync({ alter: true });
       console.log(colors.green(`Base de datos conectada exitosamente`));
     } catch (error) {
       console.log(colors.red(`Error al conectar a la base de datos: ${error}`));
