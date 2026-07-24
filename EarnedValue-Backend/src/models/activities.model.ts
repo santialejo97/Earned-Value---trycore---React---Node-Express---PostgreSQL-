@@ -8,10 +8,9 @@ export const Activity = connection.define(
   "tbl_activities",
   {
     id_activity: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.UUID,
       primaryKey: true,
-      autoIncrement: true,
-      allowNull: false,
+      defaultValue: DataTypes.UUIDV4,
     },
     name: {
       type: DataTypes.STRING,
@@ -55,7 +54,7 @@ export const Activity = connection.define(
       allowNull: false,
     },
     id_project: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.UUID,
       allowNull: false,
       references: {
         model: Project,
@@ -63,7 +62,7 @@ export const Activity = connection.define(
       },
     },
     id_user: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.UUID,
       allowNull: false,
       references: {
         model: User,

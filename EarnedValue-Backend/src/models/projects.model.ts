@@ -6,10 +6,9 @@ export const Project = connection.define(
   "tbl_projects",
   {
     id: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.UUID,
       primaryKey: true,
-      autoIncrement: true,
-      allowNull: false,
+      defaultValue: DataTypes.UUIDV4,
     },
     name: {
       type: DataTypes.STRING,
@@ -20,7 +19,7 @@ export const Project = connection.define(
       allowNull: false,
     },
     id_user: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.UUID,
       allowNull: false,
       references: {
         model: User,
