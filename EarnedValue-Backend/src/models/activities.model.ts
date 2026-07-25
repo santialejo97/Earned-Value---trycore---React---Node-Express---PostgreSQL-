@@ -1,10 +1,11 @@
-import { DataTypes } from "sequelize";
+import { DataTypes, Model, Optional } from "sequelize";
 import { connection } from "../db/db";
 import Project from "./projects.model";
 import { Status } from "../interfaces/constants.interfaces";
 import User from "./users.model";
+import { ActivityInstance } from "../interfaces/dtos/activity.dto";
 
-export const Activity = connection.define(
+export const Activity = connection.define<ActivityInstance>(
   "tbl_activities",
   {
     id_activity: {
@@ -41,6 +42,7 @@ export const Activity = connection.define(
         Status.PENDING,
         Status.IN_PROGRESS,
         Status.COMPLETED,
+        Status.DELETE,
       ),
       allowNull: false,
       defaultValue: Status.PENDING,

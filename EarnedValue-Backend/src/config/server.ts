@@ -2,13 +2,14 @@ import express, { Application } from "express";
 import { connection } from "../db/db";
 import colors from "colors";
 import "../models";
-import { routerAuth } from "../router";
+import { routerAuth, projectRouter } from "../router";
 
 class Server {
   private app: Application;
   private port: string;
   private path = {
     auth: "/earnedValue/auth",
+    project: "/earnedValue/project",
   };
 
   constructor() {
@@ -33,6 +34,7 @@ class Server {
   router() {
     console.log(colors.blue(`Levantando rutas...`));
     this.app.use(this.path.auth, routerAuth);
+    this.app.use(this.path.project, projectRouter);
   }
 
   listen() {

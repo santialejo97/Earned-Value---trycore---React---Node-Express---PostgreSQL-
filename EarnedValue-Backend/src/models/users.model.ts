@@ -1,7 +1,8 @@
-import { DataTypes } from "sequelize";
+import { DataTypes, Model, Optional } from "sequelize";
 import { connection } from "../db/db";
+import { UserInstance } from "../interfaces/dtos/user.dto";
 
-export const User = connection.define(
+export const User = connection.define<UserInstance>(
   "tbl_users",
   {
     id_user: {
