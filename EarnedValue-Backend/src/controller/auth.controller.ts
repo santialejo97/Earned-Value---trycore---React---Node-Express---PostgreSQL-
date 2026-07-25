@@ -19,7 +19,7 @@ export const authLogin = async (req: Request, res: Response) => {
 
     const isValidPassword: boolean = bcrypt.compareSync(
       password,
-      user.dataValues.password,
+      user.password,
     );
 
     if (!isValidPassword) {
@@ -29,13 +29,12 @@ export const authLogin = async (req: Request, res: Response) => {
       });
     }
 
-    const token: string = createJwt(email, user.dataValues.id_user);
-
-    delete user.dataValues.password;
+    const token: string = createJwt(email, user.id_user);
+    const { password: _, ...safeUser } = user.toJSON();
 
     return res.status(200).json({
       ok: true,
-      user: user,
+      user: safeUser,
       token,
     });
   } catch (error: any) {
@@ -54,7 +53,7 @@ export const authRegister = async (req: Request, res: Response) => {
     const userRegister = await User.findOne({ where: { email: body.email } });
 
     if (userRegister) {
-      return res.status(422).json({
+      return res.status(404).json({
         ok: false,
         msg: `User with the email ${body.email} it was found in the database, please validate information`,
       });
@@ -70,13 +69,12 @@ export const authRegister = async (req: Request, res: Response) => {
     const newUser = await User.create(body);
     newUser.save();
 
-    const { id_user, email } = newUser.dataValues;
+    const { id_user, email, password: _, ...safeUser } = newUser.toJSON();
     const token: string = createJwt(email, id_user);
 
-    delete newUser.dataValues.password;
     return res.json({
       ok: true,
-      user: newUser,
+      user: { id_user, email, ...safeUser },
       token,
     });
   } catch (error) {
@@ -93,15 +91,12 @@ export const authValidator = (req: Request, res: Response) => {
     const uuid = (req as any).uuid;
     const user = (req as any).user;
 
-    delete user?.dataValues?.password;
-
-    const { email } = user;
-
-    const token: string = createJwt(email, uuid);
+    const { password: _, ...safeUser } = user.toJSON();
+    const token: string = createJwt(safeUser.email, uuid);
 
     return res.status(200).json({
       ok: true,
-      user,
+      user: safeUser,
       token,
     });
   } catch (error) {

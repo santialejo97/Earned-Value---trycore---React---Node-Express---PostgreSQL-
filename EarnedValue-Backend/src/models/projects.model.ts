@@ -1,8 +1,10 @@
-import { DataTypes } from "sequelize";
+import { DataTypes, Model, Optional } from "sequelize";
 import { connection } from "../db/db";
 import User from "./users.model";
+import { Status } from "../interfaces/constants.interfaces";
+import { ProjectInstance } from "../interfaces/dtos/project.dto";
 
-export const Project = connection.define(
+export const Project = connection.define<ProjectInstance>(
   "tbl_projects",
   {
     id: {
@@ -17,6 +19,16 @@ export const Project = connection.define(
     description: {
       type: DataTypes.STRING,
       allowNull: false,
+    },
+    status: {
+      type: DataTypes.ENUM(
+        Status.PENDING,
+        Status.IN_PROGRESS,
+        Status.COMPLETED,
+        Status.DELETE,
+      ),
+      allowNull: false,
+      defaultValue: Status.PENDING,
     },
     id_user: {
       type: DataTypes.UUID,
