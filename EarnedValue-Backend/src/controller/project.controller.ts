@@ -33,7 +33,6 @@ export const projectEdit = async (req: Request, res: Response) => {
     const project = await Project.findOne({
       where: {
         id,
-        id_user: uuid,
       },
     });
 
@@ -41,6 +40,13 @@ export const projectEdit = async (req: Request, res: Response) => {
       return res.status(404).json({
         ok: false,
         msg: `The project with  id ${id} not found in the database, please validate information`,
+      });
+    }
+
+    if (project.dataValues.id_user !== uuid) {
+      return res.status(404).json({
+        ok: false,
+        msg: `The project with id ${id} does not match user ID`,
       });
     }
 
@@ -132,7 +138,7 @@ export const projectById = async (req: Request, res: Response) => {
     const uuid = (req as any).uuid;
     const { id } = req.params;
 
-    const project = await Project.findOne({ where: { id_user: uuid, id } });
+    const project = await Project.findOne({ where: { id } });
 
     if (!project) {
       return res.status(404).json({

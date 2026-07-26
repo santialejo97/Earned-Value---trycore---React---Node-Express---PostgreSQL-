@@ -2,7 +2,7 @@ import express, { Application } from "express";
 import { connection } from "../db/db";
 import colors from "colors";
 import "../models";
-import { routerAuth, projectRouter } from "../router";
+import { routerAuth, projectRouter, activitiesRouter } from "../router";
 
 class Server {
   private app: Application;
@@ -10,6 +10,7 @@ class Server {
   private path = {
     auth: "/earnedValue/auth",
     project: "/earnedValue/project",
+    activities: "/earnedValue/activities",
   };
 
   constructor() {
@@ -35,6 +36,7 @@ class Server {
     console.log(colors.blue(`Levantando rutas...`));
     this.app.use(this.path.auth, routerAuth);
     this.app.use(this.path.project, projectRouter);
+    this.app.use(this.path.activities, activitiesRouter);
   }
 
   listen() {
