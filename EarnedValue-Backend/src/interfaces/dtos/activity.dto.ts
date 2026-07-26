@@ -14,6 +14,7 @@ export interface ActivityAttributes {
   endDate: Date;
   id_project: string;
   id_user: string;
+  id_user_update: string;
   created_at?: Date;
   updated_at?: Date;
   deleted_at?: Date | null;

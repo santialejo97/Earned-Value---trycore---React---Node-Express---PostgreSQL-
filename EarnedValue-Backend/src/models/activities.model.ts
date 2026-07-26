@@ -32,10 +32,12 @@ export const Activity = connection.define<ActivityInstance>(
     percentageCompleted: {
       type: DataTypes.FLOAT,
       allowNull: false,
+      defaultValue: 0,
     },
     actualCost: {
       type: DataTypes.FLOAT,
       allowNull: false,
+      defaultValue: 0,
     },
     status: {
       type: DataTypes.ENUM(
@@ -46,6 +48,14 @@ export const Activity = connection.define<ActivityInstance>(
       ),
       allowNull: false,
       defaultValue: Status.PENDING,
+    },
+    id_user_update: {
+      type: DataTypes.UUID,
+      allowNull: false,
+      references: {
+        model: User,
+        key: "id_user",
+      },
     },
     startDate: {
       type: DataTypes.DATE,
@@ -87,5 +97,14 @@ Activity.belongsTo(Project, { foreignKey: "id_project", as: "project" });
 
 User.hasMany(Activity, { foreignKey: "id_user", as: "activities" });
 Activity.belongsTo(User, { foreignKey: "id_user", as: "user" });
+
+User.hasMany(Activity, {
+  foreignKey: "id_user_update",
+  as: "updatedActivities",
+});
+Activity.belongsTo(User, {
+  foreignKey: "id_user_update",
+  as: "userUpdate",
+});
 
 export default Activity;
