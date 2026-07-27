@@ -1,8 +1,9 @@
 import express, { Application } from "express";
 import { connection } from "../db/db";
+import { routerAuth, projectRouter, activitiesRouter } from "../router";
+import cors from "cors";
 import colors from "colors";
 import "../models";
-import { routerAuth, projectRouter, activitiesRouter } from "../router";
 
 class Server {
   private app: Application;
@@ -16,6 +17,7 @@ class Server {
   constructor() {
     this.app = express();
     this.app.use(express.json());
+    this.app.use(cors());
     this.port = process.env.PORT || "3000";
     this.connectDataBase();
     this.router();
