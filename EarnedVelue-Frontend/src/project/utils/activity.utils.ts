@@ -1,5 +1,77 @@
 import { toDate } from "@/lib/utils";
-import type { Activity } from "@/type/activities.type";
+import type { Activity, ActivityMetricsTotals } from "@/type/activities.type";
+import type { ProjectEarnedValueMetrics } from "@/type/projects.type";
+
+const toMetricNumber = (value: number | string | null | undefined): number => {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : 0;
+};
+
+export const sumActivityMetrics = (activities: Activity[]): ActivityMetricsTotals =>
+  activities.reduce(
+    (totals, activity) => ({
+      budgetCompletion: totals.budgetCompletion + toMetricNumber(activity.budgetCompletion),
+      percentagePlanned: totals.percentagePlanned + toMetricNumber(activity.percentagePlanned),
+      percentageCompleted: totals.percentageCompleted + toMetricNumber(activity.percentageCompleted),
+      actualCost: totals.actualCost + toMetricNumber(activity.actualCost),
+    }),
+    {
+      budgetCompletion: 0,
+      percentagePlanned: 0,
+      percentageCompleted: 0,
+      actualCost: 0,
+    },
+  );
+
+export const calculateProjectEarnedValueMetrics = (
+  activities: Activity[],
+): ProjectEarnedValueMetrics => {
+  const budgetAtCompletion = activities.reduce(
+    (sum, activity) => sum + toMetricNumber(activity.budgetCompletion),
+    0,
+  );
+  const plannedValue = activities.reduce(
+    (sum, activity) =>
+      sum +
+      (toMetricNumber(activity.budgetCompletion) *
+        toMetricNumber(activity.percentagePlanned)) /
+        100,
+    0,
+  );
+  const earnedValue = activities.reduce(
+    (sum, activity) =>
+      sum +
+      (toMetricNumber(activity.budgetCompletion) *
+        toMetricNumber(activity.percentageCompleted)) /
+        100,
+    0,
+  );
+  const actualCost = activities.reduce(
+    (sum, activity) => sum + toMetricNumber(activity.actualCost),
+    0,
+  );
+
+  const costVariance = earnedValue - actualCost;
+  const scheduleVariance = earnedValue - plannedValue;
+  const costPerformanceIndex = actualCost > 0 ? earnedValue / actualCost : 0;
+  const schedulePerformanceIndex = plannedValue > 0 ? earnedValue / plannedValue : 0;
+  const estimateAtCompletion =
+    costPerformanceIndex > 0 ? budgetAtCompletion / costPerformanceIndex : 0;
+  const varianceAtCompletion = budgetAtCompletion - estimateAtCompletion;
+
+  return {
+    budgetAtCompletion,
+    plannedValue,
+    earnedValue,
+    actualCost,
+    costVariance,
+    scheduleVariance,
+    costPerformanceIndex,
+    schedulePerformanceIndex,
+    estimateAtCompletion,
+    varianceAtCompletion,
+  };
+};
 
 export type ActivityFormValues = {
   name: string;

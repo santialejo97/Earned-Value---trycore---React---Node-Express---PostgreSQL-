@@ -3,9 +3,12 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+
 import { Textarea } from "@/components/ui/textarea"
 import { cn } from "@/lib/utils"
+import { CustomerInfoEarned } from "@/project/components/CustomerInfoEarned"
 import { CustomerModelActivity } from "@/project/components/CustomerModelActivity"
+import { useProjectMetric } from "@/project/hooks/useProjectMetric"
 import { createEmptyActivity } from "@/project/utils/activity.utils"
 import { StatusProject } from "@/type/constants.type"
 import type { Project } from "@/type/projects.type"
@@ -27,6 +30,12 @@ export const ProjectForm = ({ onSubmit, project, title, isPending, isEdit }: Pro
     const [isActivityModalOpen, setIsActivityModalOpen] = useState(false)
     const [isEditActivity, setIsEditActivity] = useState(false)
     const newActivity = useMemo(() => createEmptyActivity(project.id), [project.id])
+    const {
+        isShowEarnedValue,
+        projectEarnedValueMetrics,
+        activityMetricsTotals,
+        isLoading: isMetricsLoading,
+    } = useProjectMetric(project.id)
 
     const { user } = useAuthStore()
     const navigate = useNavigate()
@@ -61,8 +70,6 @@ export const ProjectForm = ({ onSubmit, project, title, isPending, isEdit }: Pro
         setIsActivityModalOpen(false)
         setIsEditActivity(false)
     }
-
-
 
     return (
         <>
@@ -181,11 +188,16 @@ export const ProjectForm = ({ onSubmit, project, title, isPending, isEdit }: Pro
                     </div>
 
                 </form >
-                <div className="col-span-1">
+                {isMetricsLoading && project.id !== "new" && (
+                    <div className="text-sm text-muted-foreground">Cargando métricas...</div>
+                )}
+                {isShowEarnedValue && (
+                    <CustomerInfoEarned
+                        projectEarnedValueMetrics={projectEarnedValueMetrics}
+                        activityMetricsTotals={activityMetricsTotals}
+                    />
+                )}
 
-                    {/* //TODO Agregar la informacion del valor ganado por el proyecto */}
-
-                </div>
             </div>
 
             <CustomerModelActivity
