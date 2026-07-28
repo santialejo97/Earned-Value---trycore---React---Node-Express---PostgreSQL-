@@ -7,6 +7,7 @@ import { ProjectLayout } from "@/project/layouts/ProjectLayout";
 import { ActivitiesPage } from "@/project/pages/activities/ActivitiesPage";
 import { ProjectsPage } from "@/project/pages/projects/ProjectsPage";
 import { AuthenticatedRoute, NotAuthenticatedRoute } from "@/components/routes/ProtectedRoutes";
+import { ProjectPage } from "@/project/pages/project/ProjectPage";
 
 
 const AuthLayout = lazy(() => import('../auth/layouts/AuthLayout'))
@@ -28,6 +29,14 @@ export const appRouter = createBrowserRouter([
                 path: 'activities',
                 element: <ActivitiesPage />
             },
+            {
+                path: "project/:id",
+                element: <ProjectPage />
+            },
+            {
+                path: "project/edit/:id",
+                element: <ProjectPage />
+            }
         ]
     },
     {
