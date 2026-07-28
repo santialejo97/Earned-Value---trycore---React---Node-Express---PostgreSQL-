@@ -1,6 +1,8 @@
 import express, { Application } from "express";
+import swaggerUi from "swagger-ui-express";
 import { connection } from "../db/db";
 import { routerAuth, projectRouter, activitiesRouter } from "../router";
+import { swaggerSpec } from "./swagger";
 import cors from "cors";
 import colors from "colors";
 import "../models";
@@ -36,6 +38,18 @@ class Server {
 
   router() {
     console.log(colors.blue(`Levantando rutas...`));
+
+    this.app.use(
+      "/api-docs",
+      swaggerUi.serve,
+      swaggerUi.setup(swaggerSpec, {
+        customSiteTitle: "Earned Value API Docs",
+      }),
+    );
+    this.app.get("/api-docs.json", (_req, res) => {
+      res.json(swaggerSpec);
+    });
+
     this.app.use(this.path.auth, routerAuth);
     this.app.use(this.path.project, projectRouter);
     this.app.use(this.path.activities, activitiesRouter);
@@ -44,6 +58,9 @@ class Server {
   listen() {
     this.app.listen(this.port, () => {
       console.log(colors.green(`Conexion Exitosa por el puerto: ${this.port}`));
+      console.log(
+        colors.cyan(`Documentacion Swagger: http://localhost:${this.port}/api-docs`),
+      );
     });
   }
 }
