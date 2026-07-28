@@ -18,11 +18,6 @@ const navItems = [
         url: "/projects",
         icon: FolderKanban,
     },
-    {
-        title: "Actividades",
-        url: "/activities",
-        icon: ListTodo,
-    },
 ] as const
 
 export const AppSidebar = () => {
