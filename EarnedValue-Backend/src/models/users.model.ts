@@ -1,0 +1,36 @@
+import { DataTypes, Model, Optional } from "sequelize";
+import { connection } from "../db/db";
+import { UserInstance } from "../interfaces/dtos/user.dto";
+
+export const User = connection.define<UserInstance>(
+  "tbl_users",
+  {
+    id_user: {
+      type: DataTypes.UUID,
+      primaryKey: true,
+      defaultValue: DataTypes.UUIDV4,
+    },
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    email: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    password: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+  },
+  {
+    tableName: "tbl_users",
+    timestamps: true,
+    paranoid: true,
+    createdAt: "created_at",
+    updatedAt: "updated_at",
+    deletedAt: "deleted_at",
+  },
+);
+
+export default User;
