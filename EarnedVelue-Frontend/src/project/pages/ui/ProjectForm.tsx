@@ -5,12 +5,14 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
 import { cn } from "@/lib/utils"
+import { CustomerModelActivity } from "@/project/components/CustomerModelActivity"
+import { createEmptyActivity } from "@/project/utils/activity.utils"
 import { StatusProject } from "@/type/constants.type"
 import type { Project } from "@/type/projects.type"
 import { List, Plus, SaveAll, X } from "lucide-react"
-import { useEffect } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { Controller, useForm } from "react-hook-form"
-import { Link } from "react-router"
+import { Link, useNavigate } from "react-router"
 
 interface ProjectFormProps {
     onSubmit: (data: Project) => void
@@ -22,7 +24,12 @@ interface ProjectFormProps {
 
 export const ProjectForm = ({ onSubmit, project, title, isPending, isEdit }: ProjectFormProps) => {
 
+    const [isActivityModalOpen, setIsActivityModalOpen] = useState(false)
+    const [isEditActivity, setIsEditActivity] = useState(false)
+    const newActivity = useMemo(() => createEmptyActivity(project.id), [project.id])
+
     const { user } = useAuthStore()
+    const navigate = useNavigate()
     let isOwner = false
     if (isEdit) {
         isOwner = user?.id_user === project?.id_user
@@ -41,28 +48,44 @@ export const ProjectForm = ({ onSubmit, project, title, isPending, isEdit }: Pro
 
     const name = watch('name')
 
+    const handlerListActivities = () => {
+        navigate({ pathname: '/activities', search: `?id_project=${project.id}` })
+    }
+
+    const handleOpenCreateActivity = () => {
+        setIsEditActivity(true)
+        setIsActivityModalOpen(true)
+    }
+
+    const handleCloseActivityModal = () => {
+        setIsActivityModalOpen(false)
+        setIsEditActivity(false)
+    }
+
+
+
     return (
         <>
-            <form onSubmit={handleSubmit(onSubmit)}>
-                <div className="mb-8">
-                    <div className="flex justify-between items-center">
+            <div className="mb-8">
+                <div className="flex justify-between items-center">
 
-                        <h1 className="text-2xl font-semibold tracking-tight">
-                            {title}
-                        </h1>
-                        <div className="flex gap-2">
-                            <Button variant="outline"><Plus className="w-4 h-4" /> Crear actividad</Button>
-                            <Button variant="outline"><List className="w-4 h-4" /> Listar actividades</Button>
-                        </div>
+                    <h1 className="text-2xl font-semibold tracking-tight">
+                        {title}
+                    </h1>
+                    <div className="flex gap-2">
+                        <Button variant="outline" type="button" onClick={handleOpenCreateActivity}><Plus className="w-4 h-4" /> Crear actividad</Button>
+                        <Button variant="outline" type="button" onClick={handlerListActivities} ><List className="w-4 h-4" /> Listar actividades</Button>
                     </div>
-                    {
-                        name !== '' && (
-                            <p className="mt-2 text-muted-foreground">
-                                {name}
-                            </p>
-                        )}
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {
+                    name !== '' && (
+                        <p className="mt-2 text-muted-foreground">
+                            {name}
+                        </p>
+                    )}
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <form onSubmit={handleSubmit(onSubmit)}>
                     <div className="col-span-1">
                         <div className="mb-6">
                             <Label className="block text-sm font-medium  mb-2">Nombre</Label>
@@ -156,16 +179,22 @@ export const ProjectForm = ({ onSubmit, project, title, isPending, isEdit }: Pro
                             </Button>
                         </div>
                     </div>
-                    <div className="col-span-1">
 
-                        {/* //TODO Agregar la informacion del valor ganado por el proyecto */}
+                </form >
+                <div className="col-span-1">
 
-                    </div>
-                </div>
-                <div>
+                    {/* //TODO Agregar la informacion del valor ganado por el proyecto */}
 
                 </div>
-            </form >
+            </div>
+
+            <CustomerModelActivity
+                open={isActivityModalOpen}
+                onClose={handleCloseActivityModal}
+                activity={newActivity}
+                isEdit={isEditActivity}
+            />
+
         </>
     )
 }

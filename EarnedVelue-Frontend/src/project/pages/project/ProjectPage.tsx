@@ -5,7 +5,6 @@ import { Navigate, useLocation, useNavigate, useParams } from "react-router"
 import type { Project } from "@/type/projects.type"
 import { toast } from "sonner"
 
-
 export const ProjectPage = () => {
     const { id } = useParams()
     const { pathname } = useLocation()
@@ -16,7 +15,6 @@ export const ProjectPage = () => {
     const { isLoading, data: project, isError, mutation } = useProject(id || '')
 
     const handleSubmit = async (projectLike: Project) => {
-        console.log(projectLike)
         await mutation.mutateAsync(projectLike, {
             onSuccess: () => {
                 toast.success('Proyecto actualizado correctamente', {

@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import { Activity, Project } from "../models";
 import { Status } from "../interfaces/constants.interfaces";
-import { UUID } from "sequelize";
 
 export const createActivitie = async (req: Request, res: Response) => {
   try {
@@ -10,6 +9,8 @@ export const createActivitie = async (req: Request, res: Response) => {
 
     const newActivitie = await Activity.create({
       ...body,
+      startDate: body.startDate != null ? new Date(Number(body.startDate)) : body.startDate,
+      endDate: body.endDate != null ? new Date(Number(body.endDate)) : body.endDate,
       id_user: uuid,
       id_project: params.id_project,
       id_user_update: uuid,
@@ -20,7 +21,7 @@ export const createActivitie = async (req: Request, res: Response) => {
     return res.status(200).json({
       ok: true,
       msg: `Actividad ${body.name} creado correctamente`,
-      activitie: newActivitie,
+      activity: newActivitie,
     });
   } catch (error) {
     console.error(error);
@@ -37,13 +38,13 @@ export const activitieEdit = async (req: Request, res: Response) => {
     const uuid = (req as any).uuid;
     const { id } = params;
 
-    const activitie = await Activity.findOne({
+    const existingActivity = await Activity.findOne({
       where: {
         id_activity: id,
       },
     });
 
-    if (!activitie) {
+    if (!existingActivity) {
       return res.status(404).json({
         ok: false,
         msg: `The activitie with  id ${id} not found in the database, please validate information`,
@@ -51,7 +52,12 @@ export const activitieEdit = async (req: Request, res: Response) => {
     }
 
     await Activity.update(
-      { ...body, id_user_update: uuid },
+      {
+        ...body,
+        startDate: body.startDate != null ? new Date(Number(body.startDate)) : body.startDate,
+        endDate: body.endDate != null ? new Date(Number(body.endDate)) : body.endDate,
+        id_user_update: uuid,
+      },
       {
         where: {
           id_activity: id,
@@ -59,9 +65,14 @@ export const activitieEdit = async (req: Request, res: Response) => {
       },
     );
 
+    const updatedActivity = await Activity.findOne({
+      where: { id_activity: id },
+    });
+
     return res.status(200).json({
       ok: true,
       msg: `Actividad con el id ${id} actualizado correctamente`,
+      activity: updatedActivity,
     });
   } catch (error) {
     console.error(error);
