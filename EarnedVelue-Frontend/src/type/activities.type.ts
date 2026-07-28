@@ -3,6 +3,13 @@ export interface ActivitiesListResponse {
   activities: Activity[];
 }
 
+export interface ActivityMetricsTotals {
+  budgetCompletion: number;
+  percentagePlanned: number;
+  percentageCompleted: number;
+  actualCost: number;
+}
+
 export interface Activity {
   id_activity: string;
   name: string;
