@@ -50,18 +50,20 @@ export const projectEdit = async (req: Request, res: Response) => {
       });
     }
 
-    await Project.update(
+    const projectUpdated = await Project.update(
       { ...body },
       {
         where: {
           id,
         },
+        returning: true,
       },
     );
 
     return res.status(200).json({
       ok: true,
       msg: `Proyecto con el id ${id} actualizado correctamente`,
+      project: projectUpdated[1]?.[0]?.dataValues,
     });
   } catch (error) {
     console.error(error);
@@ -111,12 +113,12 @@ export const projectList = async (req: Request, res: Response) => {
   try {
     const uuid = (req as any).uuid;
 
-    const projects = await Project.findAll({ where: { id_user: uuid } });
+    const projects = await Project.findAll();
 
     if (projects.length == 0) {
       return res.status(404).json({
         ok: false,
-        msg: `The projects for to user with id ${uuid} not exist`,
+        msg: `The projects not exist`,
       });
     }
 
